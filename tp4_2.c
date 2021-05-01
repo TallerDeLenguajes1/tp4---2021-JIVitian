@@ -15,11 +15,15 @@ typedef struct
 //////////////////////////////
 ///DECLARACION DE FUNCIONES///
 //////////////////////////////
+
 int pedirCantidad();
+Tarea ** nuevaLista(int longitud);
 void cargarTareas(Tarea ** lista, int n);
 void mostrarTarea(Tarea * tarea);
 void listarTareas(Tarea ** lista, int n);
 void tareasHechas(Tarea ** toDo, Tarea ** done, int n);
+Tarea * BuscarTarea(Tarea **);
+
 
 ///////////////////////
 ///FUNCION PRINCIPAL///
@@ -35,8 +39,17 @@ int main()
 	
 	cantidad = pedirCantidad();
 	
-	toDo = (Tarea **) malloc(sizeof(Tarea *) * cantidad);
-	done = (Tarea **) malloc(sizeof(Tarea *) * cantidad);
+	toDo = nuevaLista(cantidad);
+	done = nuevaLista(cantidad);
+	
+	
+	printf("\n");
+	printf("\tTareas terminadas\n");
+	listarTareas(done, cantidad);
+	printf("\n");
+	printf("\tTareas pendientes\n");
+	listarTareas(toDo, cantidad);
+	
 	
 	
 	cargarTareas(toDo, cantidad);
@@ -71,6 +84,19 @@ int pedirCantidad ()
 	} while(n < 1);
 	
 	return n;
+}
+
+
+Tarea ** nuevaLista(int longitud)
+{
+	Tarea ** lista = (Tarea **) malloc(sizeof(Tarea *) * longitud);
+	
+	for(int i = 0 ; i < longitud ; i++)
+	{
+		lista[i] = NULL;
+	}
+	
+	return lista;
 }
 
 void cargarTareas(Tarea ** lista, int n)
@@ -124,3 +150,5 @@ void tareasHechas(Tarea ** toDo, Tarea ** done, int n)
 			done[i] = NULL;
 	}
 }
+
+
