@@ -42,16 +42,6 @@ int main()
 	toDo = nuevaLista(cantidad);
 	done = nuevaLista(cantidad);
 	
-	
-	printf("\n");
-	printf("\tTareas terminadas\n");
-	listarTareas(done, cantidad);
-	printf("\n");
-	printf("\tTareas pendientes\n");
-	listarTareas(toDo, cantidad);
-	
-	
-	
 	cargarTareas(toDo, cantidad);
 	printf("\n");
 	printf("\tLISTADO DE TAREAS POR HACER\n");
@@ -145,10 +135,6 @@ void tareasHechas(Tarea ** toDo, Tarea ** done, int n)
 			done[i] = toDo[i];
 			toDo[i] = NULL;
 			printf("\t%d\n", (done[i])->TareaID);
-		} 
-		else 
-			done[i] = NULL;
+		}
 	}
 }
-
-
