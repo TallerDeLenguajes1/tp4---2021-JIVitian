@@ -1,9 +1,12 @@
 #include<stdio.h>
 #include<stdlib.h>
+#include<time.h>
 
 /////////////////
 ///ESTRUCTURAS///
 /////////////////
+#define N 50
+
 typedef struct
 {
     int TareaID; //Numerado en ciclo iterativo
@@ -17,12 +20,13 @@ typedef struct
 //////////////////////////////
 
 int pedirCantidad();
+//Constructor del tipo Tarea
 Tarea ** nuevaLista(int longitud);
 void cargarTareas(Tarea ** lista, int n);
 void mostrarTarea(Tarea * tarea);
 void listarTareas(Tarea ** lista, int n);
 void tareasHechas(Tarea ** toDo, Tarea ** done, int n);
-Tarea * BuscarTarea(Tarea **);
+Tarea * buscarTarea(Tarea ** lista, int n, char palabra[]);
 
 
 ///////////////////////
@@ -43,20 +47,21 @@ int main()
 	done = nuevaLista(cantidad);
 	
 	
-	printf("\n");
-	printf("\tTareas terminadas\n");
-	listarTareas(done, cantidad);
-	printf("\n");
-	printf("\tTareas pendientes\n");
-	listarTareas(toDo, cantidad);
-	
-	
-	
 	cargarTareas(toDo, cantidad);
+	printf("\n");	
+	
+	printf("\tBUSCAR UNA TAREA POR PALABRA\n");
+	if(buscarTarea(toDo, cantidad, "Comer\0"))
+		mostrarTarea(buscarTarea(toDo, cantidad, "Comer\0"));
+	else
+		printf("La palabra ingresada no se encuentra en ninguna descripcion de la lista de tareas.\n");
 	printf("\n");
+	
 	printf("\tLISTADO DE TAREAS POR HACER\n");
 	listarTareas(toDo, cantidad);
 	printf("\n");
+	
+	printf("\tINDICAR LAS TAREAS REALIZADAS\n");
 	tareasHechas(toDo, done, cantidad);
 	printf("\n");
 	printf("\tTareas terminadas\n");
@@ -107,7 +112,7 @@ void cargarTareas(Tarea ** lista, int n)
 		lista[i] = (Tarea *) malloc(sizeof(Tarea *));
 		(lista[i])->TareaID = i + 1;
 		(lista[i])->Duracion = 1 + rand() % 10;
-		(lista[i])->Descripcion = (char *) malloc(sizeof(char)*50);
+		(lista[i])->Descripcion = (char *) malloc(sizeof(char)*N);
 		printf("Ingrese una breve descripción de la tarea:\n");
 		gets((lista[i])->Descripcion);
 	}
@@ -115,18 +120,20 @@ void cargarTareas(Tarea ** lista, int n)
 
 void mostrarTarea(Tarea * tarea)
 {
-	printf("ID: %d\n", tarea->TareaID);
-	printf("Descripcion: %s\n", tarea->Descripcion);
-	printf("Duracion: %dHs\n", tarea->Duracion);
-	printf("\n");	
+	if(tarea)
+	{
+		printf("ID: %d\n", tarea->TareaID);
+		printf("Descripcion: %s\n", tarea->Descripcion);
+		printf("Duracion: %dHs\n", tarea->Duracion);
+		printf("\n");		
+	}
 }
 
 void listarTareas(Tarea ** lista, int n)
 {
 	for(int i = 0 ; i < n ; i++)
 	{
-		if(lista[i])
-			mostrarTarea(lista[i]);
+		mostrarTarea(lista[i]);
 	}
 }
 
@@ -136,6 +143,7 @@ void tareasHechas(Tarea ** toDo, Tarea ** done, int n)
 	
 	for(int i = 0 ; i < n ; i++)
 	{
+		printf("\tTarea Nro %d\n", (i + 1));
 		mostrarTarea(toDo[i]);
 		printf("¿Ya realizo la tarea? (S/N)\n");
 		scanf(" %c", &ask);
@@ -145,10 +153,16 @@ void tareasHechas(Tarea ** toDo, Tarea ** done, int n)
 			done[i] = toDo[i];
 			toDo[i] = NULL;
 			printf("\t%d\n", (done[i])->TareaID);
-		} 
-		else 
-			done[i] = NULL;
+		}
 	}
 }
 
+Tarea * buscarTarea(Tarea ** lista, int n, char * palabra)
+{	
+	for (int i = 0 ; i < n ; i++)
+	    if (strstr((lista[i])->Descripcion, palabra))
+	        return lista[i];
+	
+	return NULL;
+}
 
