@@ -26,11 +26,11 @@ void cargarTareas(Tarea ** lista, int n);
 void mostrarTarea(Tarea * tarea);
 void listarTareas(Tarea ** lista, int n);
 void tareasHechas(Tarea ** toDo, Tarea ** done, int n);
-<<<<<<< HEAD
+//Busca entre la lista una palabra clave en la descripción y devuelve la tarea que la contenga
 Tarea * buscarPorPalabra(Tarea ** lista, int n, char palabra[]);
-=======
-Tarea * buscarPorIDO(Tarea ** lista, int n, int id);
->>>>>>> BuscaTarea
+//Busca en la lista el ID ingresado como parametro y devuelve el elemento que lo contenga
+Tarea * buscarPorID(Tarea ** lista, int n, int id);
+void liberarMemoria(Tarea ** lista, int n);
 
 
 ///////////////////////
@@ -42,6 +42,8 @@ int main()
 	srand(time(NULL));
 	
 	int cantidad;
+	char palabra[N];
+	int ID;
 	Tarea tarea;
 	Tarea ** toDo, ** done;
 	
@@ -54,20 +56,23 @@ int main()
 	cargarTareas(toDo, cantidad);
 	printf("\n");	
 	
-<<<<<<< HEAD
 	printf("\tBUSCAR UNA TAREA POR PALABRA\n");
-	if(buscarPorPalabra(toDo, cantidad, "Comer\0"))
-		mostrarTarea(buscarPorPalabra(toDo, cantidad, "Comer\0"));
+	printf("Ingrese la palabra clave de la tarea que quiere buscar: \n");
+	scanf(" %s", palabra);
+	if(buscarPorPalabra(toDo, cantidad, palabra))
+		mostrarTarea(buscarPorPalabra(toDo, cantidad, palabra));
 	else
 		printf("La palabra ingresada no se encuentra en ninguna descripcion de la lista de tareas.\n");
 	printf("\n");
-=======
+
 	printf("\tBUSCAR UNA TAREA POR ID\n");
-	if(buscarPorID(toDo, cantidad, 4))
-		mostrarTarea(buscarPorID(toDo, cantidad, 4));
+	printf("Ingrese el ID de la tarea que quiere buscar: (entre 1 y %d)\n", cantidad);
+	scanf(" %d", &ID);
+	if(buscarPorID(toDo, cantidad, ID))
+		mostrarTarea(buscarPorID(toDo, cantidad, ID));
 	else
 		printf("El id ingresado no corresponde con ningun elemento de la lista\n");
->>>>>>> BuscaTarea
+	printf("\n");	
 	
 	printf("\tLISTADO DE TAREAS POR HACER\n");
 	listarTareas(toDo, cantidad);
@@ -82,6 +87,9 @@ int main()
 	printf("\tTareas pendientes\n");
 	listarTareas(toDo, cantidad);
 	
+	liberarMemoria(toDo, cantidad);
+	liberarMemoria(done, cantidad);
+
     return 0;
 }
 
@@ -165,7 +173,6 @@ void tareasHechas(Tarea ** toDo, Tarea ** done, int n)
 	}
 }
 
-<<<<<<< HEAD
 Tarea * buscarPorPalabra(Tarea ** lista, int n, char * palabra)
 {	
 	for (int i = 0 ; i < n ; i++)
@@ -175,7 +182,6 @@ Tarea * buscarPorPalabra(Tarea ** lista, int n, char * palabra)
 	return NULL;
 }
 
-=======
 Tarea * buscarPorID(Tarea ** lista, int n, int id)
 {
 	if (id > n)
@@ -183,4 +189,14 @@ Tarea * buscarPorID(Tarea ** lista, int n, int id)
 	else
 		return lista[id - 1];
 }
->>>>>>> BuscaTarea
+
+void liberarMemoria(Tarea ** lista, int n)
+{
+	for (int i = 0 ; i < n ; i++)
+	{
+		if(lista[i])
+			free((lista[i])->Descripcion);
+		free(lista[i]);
+	}
+	free(lista);
+}
