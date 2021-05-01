@@ -1,5 +1,6 @@
 #include<stdio.h>
 #include<stdlib.h>
+#include<time.h>
 
 /////////////////
 ///ESTRUCTURAS///
@@ -17,12 +18,13 @@ typedef struct
 //////////////////////////////
 
 int pedirCantidad();
+//Constructor del tipo Tarea
 Tarea ** nuevaLista(int longitud);
 void cargarTareas(Tarea ** lista, int n);
 void mostrarTarea(Tarea * tarea);
 void listarTareas(Tarea ** lista, int n);
 void tareasHechas(Tarea ** toDo, Tarea ** done, int n);
-Tarea * BuscarTarea(Tarea **);
+Tarea * buscarTarea(Tarea ** lista, int n, int id);
 
 
 ///////////////////////
@@ -42,11 +44,21 @@ int main()
 	toDo = nuevaLista(cantidad);
 	done = nuevaLista(cantidad);
 	
+	
 	cargarTareas(toDo, cantidad);
-	printf("\n");
+	printf("\n");	
+	
+	printf("\tBUSCAR UNA TAREA POR ID\n");
+	if(buscarTarea(toDo, cantidad, 4))
+		mostrarTarea(buscarTarea(toDo, cantidad, 4));
+	else
+		printf("El id ingresado no corresponde con ningun elemento de la lista\n");
+	
 	printf("\tLISTADO DE TAREAS POR HACER\n");
 	listarTareas(toDo, cantidad);
 	printf("\n");
+	
+	printf("\tINDICAR LAS TAREAS REALIZADAS\n");
 	tareasHechas(toDo, done, cantidad);
 	printf("\n");
 	printf("\tTareas terminadas\n");
@@ -105,18 +117,20 @@ void cargarTareas(Tarea ** lista, int n)
 
 void mostrarTarea(Tarea * tarea)
 {
-	printf("ID: %d\n", tarea->TareaID);
-	printf("Descripcion: %s\n", tarea->Descripcion);
-	printf("Duracion: %dHs\n", tarea->Duracion);
-	printf("\n");	
+	if(tarea)
+	{
+		printf("ID: %d\n", tarea->TareaID);
+		printf("Descripcion: %s\n", tarea->Descripcion);
+		printf("Duracion: %dHs\n", tarea->Duracion);
+		printf("\n");		
+	}
 }
 
 void listarTareas(Tarea ** lista, int n)
 {
 	for(int i = 0 ; i < n ; i++)
 	{
-		if(lista[i])
-			mostrarTarea(lista[i]);
+		mostrarTarea(lista[i]);
 	}
 }
 
@@ -126,6 +140,7 @@ void tareasHechas(Tarea ** toDo, Tarea ** done, int n)
 	
 	for(int i = 0 ; i < n ; i++)
 	{
+		printf("\tTarea Nro %d\n", (i + 1));
 		mostrarTarea(toDo[i]);
 		printf("¿Ya realizo la tarea? (S/N)\n");
 		scanf(" %c", &ask);
@@ -137,4 +152,12 @@ void tareasHechas(Tarea ** toDo, Tarea ** done, int n)
 			printf("\t%d\n", (done[i])->TareaID);
 		}
 	}
+}
+
+Tarea * buscarTarea(Tarea ** lista, int n, int id)
+{
+	if (id > n)
+		return NULL;
+	else
+		return lista[id - 1];
 }
