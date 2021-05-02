@@ -5,14 +5,22 @@
 /////////////////
 ///ESTRUCTURAS///
 /////////////////
-#define N 50
+#define N 100
 
-typedef struct
+typedef struct Tarea
 {
     int TareaID; //Numerado en ciclo iterativo
     char * Descripcion; //
     int Duracion; // entre 10 y 100
 } Tarea ;
+
+typedef struct Nodo Nodo;
+
+typedef struct Nodo 
+{
+	Tarea T;
+	Nodo * Siguiente;
+} Nodo ;
 
 
 //////////////////////////////
@@ -21,16 +29,18 @@ typedef struct
 
 int pedirCantidad();
 //Constructor del tipo Tarea
-Tarea ** nuevaLista(int longitud);
-void cargarTareas(Tarea ** lista, int n);
-void mostrarTarea(Tarea * tarea);
-void listarTareas(Tarea ** lista, int n);
-void tareasHechas(Tarea ** toDo, Tarea ** done, int n);
-//Busca entre la lista una palabra clave en la descripción y devuelve la tarea que la contenga
-Tarea * buscarPorPalabra(Tarea ** lista, int n, char palabra[]);
+Nodo * nuevaLista();
+Tarea CrearTarea(int id);
+Nodo * CrearNodo(Tarea tarea);
+void InsertarEnLista(Nodo ** Lista, Nodo * nodo);
+void mostrarTarea(Nodo * nodo);
+void listarTareas(Nodo ** Lista);
+void tareasHechas(Nodo ** toDo, Nodo ** done);
+//Busca entre la lista una palabra clave en la descripcion y devuelve la tarea que la contenga
+Nodo * buscarPorPalabra(Nodo ** lista, char palabra[]);
 //Busca en la lista el ID ingresado como parametro y devuelve el elemento que lo contenga
-Tarea * buscarPorID(Tarea ** lista, int n, int id);
-void liberarMemoria(Tarea ** lista, int n);
+Nodo * buscarPorID(Nodo ** lista, int id);
+void liberarMemoria(Nodo ** lista);
 
 
 ///////////////////////
@@ -45,22 +55,31 @@ int main()
 	char palabra[N];
 	int ID;
 	Tarea tarea;
-	Tarea ** toDo, ** done;
+	Tarea * toDo, * done;
 	
 	cantidad = pedirCantidad();
 	
-	toDo = nuevaLista(cantidad);
-	done = nuevaLista(cantidad);
+	toDo = nuevaLista();
+	done = nuevaLista();
 	
+	for (int i = 0 ; i < cantidad ; i++)
+	{
+		InsertarEnLista(&toDo, CrearNodo(CrearTarea(i + 1)));
+		printf("\n");	
+	}
 	
-	cargarTareas(toDo, cantidad);
-	printf("\n");	
-	
+	printf("\tLISTADO DE TAREAS POR HACER\n");
+	listarTareas(&toDo);
+	printf("\n");
+
 	printf("\tBUSCAR UNA TAREA POR PALABRA\n");
 	printf("Ingrese la palabra clave de la tarea que quiere buscar: \n");
 	scanf(" %s", palabra);
-	if(buscarPorPalabra(toDo, cantidad, palabra))
-		mostrarTarea(buscarPorPalabra(toDo, cantidad, palabra));
+	printf("\n");
+	if(buscarPorPalabra(&toDo, palabra)){
+		printf("\t\tTarea Encontrada:\n");
+		mostrarTarea(buscarPorPalabra(&toDo, palabra));
+	}
 	else
 		printf("La palabra ingresada no se encuentra en ninguna descripcion de la lista de tareas.\n");
 	printf("\n");
@@ -68,27 +87,26 @@ int main()
 	printf("\tBUSCAR UNA TAREA POR ID\n");
 	printf("Ingrese el ID de la tarea que quiere buscar: (entre 1 y %d)\n", cantidad);
 	scanf(" %d", &ID);
-	if(buscarPorID(toDo, cantidad, ID))
-		mostrarTarea(buscarPorID(toDo, cantidad, ID));
+	printf("\n");
+	if(buscarPorID(&toDo, ID)){
+		printf("\t\tTarea Encontrada:\n");
+		mostrarTarea(buscarPorID(&toDo, ID));
+	}		
 	else
 		printf("El id ingresado no corresponde con ningun elemento de la lista\n");
-	printf("\n");	
-	
-	printf("\tLISTADO DE TAREAS POR HACER\n");
-	listarTareas(toDo, cantidad);
 	printf("\n");
 	
 	printf("\tINDICAR LAS TAREAS REALIZADAS\n");
-	tareasHechas(toDo, done, cantidad);
+	tareasHechas(&toDo, &done);
 	printf("\n");
 	printf("\tTareas terminadas\n");
-	listarTareas(done, cantidad);
+	listarTareas(&done);
 	printf("\n");
 	printf("\tTareas pendientes\n");
-	listarTareas(toDo, cantidad);
+	listarTareas(&toDo);
 	
-	liberarMemoria(toDo, cantidad);
-	liberarMemoria(done, cantidad);
+	liberarMemoria(&toDo);
+	liberarMemoria(&done);
 
     return 0;
 }
@@ -111,92 +129,147 @@ int pedirCantidad ()
 	return n;
 }
 
-
-Tarea ** nuevaLista(int longitud)
-{
-	Tarea ** lista = (Tarea **) malloc(sizeof(Tarea *) * longitud);
-	
-	for(int i = 0 ; i < longitud ; i++)
-		lista[i] = NULL;
-
-	return lista;
+Nodo * nuevaLista()
+{	
+	return NULL;
 }
 
-void cargarTareas(Tarea ** lista, int n)
+Tarea CrearTarea(int id)
 {
-	for (int i = 0 ; i < n ; i++)
+	Tarea tarea;
+	
+	printf("\tTarea Nro %d\n", id);
+	tarea.TareaID = id;
+	tarea.Duracion = 1 + rand() % 10;
+	tarea.Descripcion = (char *) malloc(sizeof(char)*N);
+	printf("Ingrese una breve descripci? de la tarea:\n");
+	gets(tarea.Descripcion);
+	
+	return tarea;
+}
+
+Nodo * CrearNodo(Tarea tarea)
+{
+	Nodo * NNodo = (Nodo *) malloc (sizeof(Nodo));
+	NNodo->T = tarea;
+	NNodo->Siguiente = NULL;
+	
+	return NNodo;
+}
+
+void InsertarEnLista(Nodo ** Lista, Nodo * nodo)
+{
+	if (*Lista) 
 	{
-		printf("\tTarea Nro %d\n", (i + 1));
-		lista[i] = (Tarea *) malloc(sizeof(Tarea *));
-		(lista[i])->TareaID = i + 1;
-		(lista[i])->Duracion = 1 + rand() % 10;
-		(lista[i])->Descripcion = (char *) malloc(sizeof(char)*N);
-		printf("Ingrese una breve descripci? de la tarea:\n");
-		gets((lista[i])->Descripcion);
+		Nodo * aux = *Lista;
+		while (aux->Siguiente)
+			aux = aux->Siguiente;
+		aux->Siguiente = nodo;
+	}
+	else
+	{
+		*Lista = nodo;	
 	}
 }
 
-void mostrarTarea(Tarea * tarea)
+void mostrarTarea(Nodo * nodo)
 {
-	if(tarea)
+	if(nodo)
 	{
-		printf("ID: %d\n", tarea->TareaID);
-		printf("Descripcion: %s\n", tarea->Descripcion);
-		printf("Duracion: %dHs\n", tarea->Duracion);
+		printf("ID: %d\n", nodo->T.TareaID);
+		printf("Descripcion: %s\n", nodo->T.Descripcion);
+		printf("Duracion: %dHs\n", nodo->T.Duracion);
 		printf("\n");		
 	}
 }
 
-void listarTareas(Tarea ** lista, int n)
+void listarTareas(Nodo ** Lista)
 {
-	for(int i = 0 ; i < n ; i++)
-		mostrarTarea(lista[i]);
+	Nodo * aux = *Lista;
+	while (aux)
+	{
+		mostrarTarea(aux);
+		aux = aux->Siguiente;
+	}
+		
 }
 
-void tareasHechas(Tarea ** toDo, Tarea ** done, int n)
+void tareasHechas(Nodo ** toDo, Nodo ** done)
 {
 	char ask;
+	Nodo * aux = *toDo;
+	Nodo * anterior = NULL;
 	
-	for(int i = 0 ; i < n ; i++)
+	while (aux)
 	{
-		printf("\tTarea Nro %d\n", (i + 1));
-		mostrarTarea(toDo[i]);
+		printf("\tTarea Nro %d\n", aux->T.TareaID);
+		mostrarTarea(aux);
 		printf("?Ya realizo la tarea? (S/N)\n");
 		scanf(" %c", &ask);
 		
 		if(ask == 's' || ask == 'S')
 		{
-			done[i] = toDo[i];
-			toDo[i] = NULL;
-			printf("\t%d\n", (done[i])->TareaID);
+			//Es el primer elemento
+			if(!anterior)
+			{
+				InsertarEnLista(done, aux);
+				*toDo = (*toDo)->Siguiente;
+				aux->Siguiente = NULL;
+				aux = *toDo;
+			}
+			//Es un elemento cualquiera
+			else
+			{
+				InsertarEnLista(done, aux);
+				anterior->Siguiente = aux->Siguiente;
+				aux->Siguiente = NULL;
+				aux = anterior->Siguiente;
+			}
+		}
+		else
+		{
+			anterior = aux;
+			aux = aux->Siguiente;
 		}
 	}
 }
 
-Tarea * buscarPorPalabra(Tarea ** lista, int n, char * palabra)
+Nodo * buscarPorPalabra(Nodo ** lista, char * palabra)
 {	
-	for (int i = 0 ; i < n ; i++)
-	    if (strstr((lista[i])->Descripcion, palabra))
-	        return lista[i];
+	Nodo * aux = *lista;
+	while (aux)
+	{
+	    if (strstr(aux->T.Descripcion, palabra))
+	        return aux;
+	    aux = aux->Siguiente;
+	}
 	
 	return NULL;
 }
 
-Tarea * buscarPorID(Tarea ** lista, int n, int id)
+Nodo * buscarPorID(Nodo ** lista, int id)
 {
-	if (id > n)
-		return NULL;
-	else
-		return lista[id - 1];
+	Nodo * aux = *lista;
+	while (aux)
+	{
+		if (aux->T.TareaID == id)
+			return aux;
+		aux = aux->Siguiente;
+	}
+	return NULL;
 }
 
-void liberarMemoria(Tarea ** lista, int n)
+void liberarMemoria(Nodo ** lista)
 {
-	for (int i = 0 ; i < n ; i++)
+	Nodo * aux;
+	
+	while (*lista)
 	{
-		if(lista[i])
-			free((lista[i])->Descripcion);
-		free(lista[i]);
+		free((*lista)->T.Descripcion);
+		aux = *lista;
+		*lista = (*lista)->Siguiente;
+		free(aux);
 	}
 	free(lista);
 }
+
