@@ -1,5 +1,6 @@
 #include<stdio.h>
 #include<stdlib.h>
+#include<string.h>
 #include<time.h>
 
 /////////////////
@@ -26,7 +27,7 @@ void cargarTareas(Tarea ** lista, int n);
 void mostrarTarea(Tarea * tarea);
 void listarTareas(Tarea ** lista, int n);
 void tareasHechas(Tarea ** toDo, Tarea ** done, int n);
-//Busca entre la lista una palabra clave en la descripción y devuelve la tarea que la contenga
+//Busca entre la lista una palabra clave en la descripciï¿½n y devuelve la tarea que la contenga
 Tarea * buscarPorPalabra(Tarea ** lista, int n, char palabra[]);
 //Busca en la lista el ID ingresado como parametro y devuelve el elemento que lo contenga
 Tarea * buscarPorID(Tarea ** lista, int n, int id);
