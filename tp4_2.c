@@ -43,7 +43,6 @@ Nodo * buscarPorPalabra(Nodo ** lista, char palabra[]);
 Nodo * buscarPorID(Nodo ** lista, int id);
 void liberarMemoria(Nodo ** lista);
 
-
 ///////////////////////
 ///FUNCION PRINCIPAL///
 ///////////////////////
@@ -56,7 +55,7 @@ int main()
 	char palabra[N];
 	int ID;
 	Tarea tarea;
-	Tarea * toDo, * done;
+	Nodo * toDo, * done;
 	
 	cantidad = pedirCantidad();
 	
@@ -105,7 +104,7 @@ int main()
 	printf("\n");
 	printf("\tTareas pendientes\n");
 	listarTareas(&toDo);
-	
+
 	liberarMemoria(&toDo);
 	liberarMemoria(&done);
 
@@ -272,6 +271,5 @@ void liberarMemoria(Nodo ** lista)
 		*lista = (*lista)->Siguiente;
 		free(aux);
 	}
-	free(lista);
 }
-
+	
