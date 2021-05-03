@@ -1,5 +1,6 @@
 #include<stdio.h>
 #include<stdlib.h>
+#include<string.h>
 #include<time.h>
 
 /////////////////
@@ -108,6 +109,7 @@ int main()
 	liberarMemoria(&toDo);
 	liberarMemoria(&done);
 
+	getchar();
     return 0;
 }
 
